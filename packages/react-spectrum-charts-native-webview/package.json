@@ -1,0 +1,36 @@
+{
+  "name": "@spectrum-charts/react-spectrum-charts-native-webview",
+  "version": "1.52.0",
+  "description": "React Native wrapper that renders react-spectrum-charts inside a WebView for pixel-identical charts on native",
+  "main": "dist/index.js",
+  "types": "dist/@types/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "author": "marshall.w.peterson@gmail.com",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum-charts.git"
+  },
+  "scripts": {
+    "build:host": "webpack --config ./webpack.host.config.js",
+    "generate:host-html": "node ./scripts/generateHostHtml.js",
+    "build": "yarn build:host && yarn generate:host-html && tsc",
+    "clean": "rm -rf dist dist-host",
+    "pack-test": "yarn clean && yarn build && cross-env NODE_ENV=development npm pack",
+    "pack": "cross-env NODE_ENV=production npm pack",
+    "publish-package": "npm publish --access public"
+  },
+  "devDependencies": {
+    "@adobe/react-spectrum-charts": "1.52.0",
+    "react-native": "^0.87.1",
+    "react-native-webview": "^14.0.1"
+  },
+  "peerDependencies": {
+    "react": ">= 17.0.2",
+    "react-native": ">= 0.71.0",
+    "react-native-webview": ">= 13.0.0"
+  }
+}
