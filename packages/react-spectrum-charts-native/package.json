@@ -1,0 +1,39 @@
+{
+  "name": "@spectrum-charts/react-spectrum-charts-native",
+  "version": "0.1.0",
+  "description": "Proof-of-concept native renderer for Spectrum charts on React Native, using react-native-svg.",
+  "main": "dist/index.js",
+  "types": "dist/@types/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "author": "marshallpete",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum-charts.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "test": "cross-env TZ=UTC BABEL_ENV=test jest --config ../../jest.config.js --testPathPattern=react-spectrum-charts-native"
+  },
+  "dependencies": {
+    "@spectrum-charts/constants": "1.52.0",
+    "@spectrum-charts/vega-spec-builder": "1.52.0",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
+    "vega": "^6.2.0"
+  },
+  "peerDependencies": {
+    "react": ">= 17.0.2",
+    "react-native": ">= 0.70.0",
+    "react-native-svg": ">= 13.0.0"
+  },
+  "devDependencies": {
+    "@types/d3-scale": "^4.0.8",
+    "@types/d3-shape": "^3.1.6",
+    "cross-env": "^7.0.3",
+    "typescript": "^5.4.5"
+  }
+}

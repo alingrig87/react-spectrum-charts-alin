@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "src",
+    "outDir": "./dist",
+    "declarationDir": "./dist/@types/",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "composite": true,
+    "rootDir": "."
+  },
+  "include": ["src/**/*", "index.ts"],
+  "exclude": ["**/*.test.ts", "**/*.test.tsx"],
+  "references": [{ "path": "../constants" }, { "path": "../vega-spec-builder" }]
+}
