@@ -7,9 +7,9 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "composite": true,
-    "rootDir": "."
+    "rootDir": "./src"
   },
-  "include": ["src/**/*", "index.ts"],
+  "include": ["src/**/*"],
   "exclude": ["**/*.test.ts", "**/*.test.tsx"],
   "references": [{ "path": "../constants" }, { "path": "../vega-spec-builder" }]
 }
