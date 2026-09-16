@@ -40,16 +40,34 @@ config.resolver.nodeModulesPaths = [
 // This app pins react@18.2.0/react-dom@18.2.0 (what Expo 51/RN 0.74
 // need), but the monorepo root's own devDependencies pin react@^19 (for
 // the unrelated desktop packages) — with hierarchical lookup on, Metro
-// can resolve two different `react` installs for different requirers in
-// the same bundle, which React itself refuses to render ("Minified React
-// error #525: A React Element from an older version of React was
+// resolves two different `react` installs for different requirers in
+// the same bundle (workspace packages like @spectrum-charts/* walk up to
+// the root-hoisted react@19; this app's own files find its own nested
+// react@18.2.0 first), which React itself refuses to render ("Minified
+// React error #525: A React Element from an older version of React was
 // rendered... Multiple copies of the react package is used" — confirmed
-// via a live screenshot + console error). Force every requirer to this
-// app's own copies specifically for these three packages.
-config.resolver.extraNodeModules = {
+// via a live screenshot + console error). `resolver.extraNodeModules`
+// alone did NOT fix this — it's only a fallback for modules Metro can't
+// otherwise resolve, and `react`/`react-dom`/`react-native` always ARE
+// otherwise resolvable, so it was silently never applied. A custom
+// resolveRequest is the one hook that unconditionally overrides
+// resolution regardless of Metro's own default walk.
+const forcedModuleRoots = {
   react: path.resolve(projectRoot, 'node_modules/react'),
   'react-dom': path.resolve(projectRoot, 'node_modules/react-dom'),
   'react-native': path.resolve(projectRoot, 'node_modules/react-native'),
+};
+const defaultResolveRequest = config.resolver.resolveRequest;
+config.resolver.resolveRequest = (context, moduleName, platform) => {
+  for (const [name, root] of Object.entries(forcedModuleRoots)) {
+    if (moduleName === name || moduleName.startsWith(`${name}/`)) {
+      const rewritten = moduleName === name ? root : path.join(root, moduleName.slice(name.length));
+      return context.resolveRequest(context, rewritten, platform);
+    }
+  }
+  return defaultResolveRequest
+    ? defaultResolveRequest(context, moduleName, platform)
+    : context.resolveRequest(context, moduleName, platform);
 };
 
 module.exports = config;
