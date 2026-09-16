@@ -11,7 +11,11 @@
     },
     "android": {},
     "web": {
-      "bundler": "metro"
+      "bundler": "metro",
+      "output": "single"
+    },
+    "experiments": {
+      "baseUrl": "/react-spectrum-charts-alin"
     }
   }
 }

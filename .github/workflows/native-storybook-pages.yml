@@ -1,0 +1,75 @@
+name: Build and deploy native charts Storybook (web) to GitHub Pages
+# On-device Storybook (@storybook/react-native) for the hand-drawn
+# react-spectrum-charts-native-charts package, exported as a static
+# react-native-web build and published to GitHub Pages under /native/.
+#
+# Runs in CI instead of locally because a full `yarn install` of this
+# monorepo's root devDependencies (Storybook 8, Playwright, webpack,
+# Vega, @react-spectrum/s2, ...) reliably OOMs on a 6GB local machine;
+# GitHub-hosted runners have much more headroom.
+
+on:
+  push:
+    branches:
+      - rn/native-storybook
+  workflow_dispatch: {}
+
+concurrency:
+  group: gh-pages-deploy-native-storybook
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --max-old-space-size=6144
+      CI: '1'
+      EXPO_NO_TELEMETRY: '1'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install yarn classic
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install --network-timeout 600000
+
+      - name: Build @spectrum-charts/constants
+        run: yarn workspace @spectrum-charts/constants build
+
+      - name: Build @spectrum-charts/vega-spec-builder
+        run: yarn workspace @spectrum-charts/vega-spec-builder build
+
+      - name: Build @spectrum-charts/react-spectrum-charts-native
+        run: yarn workspace @spectrum-charts/react-spectrum-charts-native build
+
+      - name: Build @spectrum-charts/react-spectrum-charts-native-charts
+        run: yarn workspace @spectrum-charts/react-spectrum-charts-native-charts build
+
+      - name: Generate on-device Storybook story registry
+        run: yarn workspace @spectrum-charts/react-spectrum-charts-native-storybook storybook-generate
+
+      - name: Export static web build
+        run: npx expo export --platform web -o dist
+        working-directory: packages/react-spectrum-charts-native-storybook
+
+      - name: Deploy to GitHub Pages (/native/)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: packages/react-spectrum-charts-native-storybook/dist
+          publish_branch: gh-pages
+          destination_dir: native
+          keep_files: true
