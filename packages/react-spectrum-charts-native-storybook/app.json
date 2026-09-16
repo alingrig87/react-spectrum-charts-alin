@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "RSC Native Storybook",
+    "slug": "rsc-native-storybook",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {},
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
