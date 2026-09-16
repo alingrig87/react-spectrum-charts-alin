@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { scaleLinear, scaleTime } from 'd3-scale';
+import { scaleBand, scaleLinear, scaleTime } from 'd3-scale';
 import { Scale as VegaScale } from 'vega';
 
 export interface ScaleTick {
@@ -22,8 +22,17 @@ export interface ScaleBuildResult {
   ticks: ScaleTick[];
 }
 
+export interface BandScaleBuildResult {
+  toPixel: (value: string) => number;
+  bandwidth: number;
+  ticks: ScaleTick[];
+}
+
 /** Only linear and time scales are interpreted — see README for what's unsupported. */
 export const isSupportedScaleType = (type: string | undefined): boolean => type === 'linear' || type === 'time';
+
+/** Only a `band` dimension scale is interpreted for bar marks — see README for what's unsupported. */
+export const isSupportedBandScaleType = (type: string | undefined): boolean => type === 'band';
 
 /**
  * Builds a d3 continuous scale from a resolved Vega scale definition and the mark's own data values,
@@ -64,5 +73,36 @@ export const buildContinuousScale = (vegaScale: VegaScale, values: number[], ran
   return {
     toPixel: (value) => scale(value),
     ticks: scale.ticks(tickCount).map((t) => ({ pixel: scale(t), label: format(t) })),
+  };
+};
+
+/**
+ * Builds a d3 band scale from a resolved Vega band scale definition and the mark's own (already
+ * de-duplicated, in first-seen order) category values, honoring `paddingInner`/`paddingOuter` the way
+ * Vega's runtime scale resolution would. Tick generation and ordering are a d3 approximation, not a
+ * replica of Vega's own domain-sorting logic — see README.
+ */
+export const buildBandScale = (
+  vegaScale: VegaScale,
+  categories: string[],
+  rangeSize: number
+): BandScaleBuildResult => {
+  const paddingInner = 'paddingInner' in vegaScale && typeof vegaScale.paddingInner === 'number'
+    ? vegaScale.paddingInner
+    : 0;
+  const paddingOuter = 'paddingOuter' in vegaScale && typeof vegaScale.paddingOuter === 'number'
+    ? vegaScale.paddingOuter
+    : 0;
+
+  const scale = scaleBand<string>()
+    .domain(categories)
+    .range([0, rangeSize])
+    .paddingInner(paddingInner)
+    .paddingOuter(paddingOuter);
+
+  return {
+    toPixel: (value) => scale(value) ?? 0,
+    bandwidth: categories.length ? scale.bandwidth() : 0,
+    ticks: categories.map((c) => ({ pixel: (scale(c) ?? 0) + scale.bandwidth() / 2, label: c })),
   };
 };

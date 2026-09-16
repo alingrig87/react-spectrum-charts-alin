@@ -33,8 +33,8 @@ describe('buildRenderModel', () => {
   test('produces a line path and both axes for a time-scale line chart', () => {
     const model = buildRenderModel(timeChartOptions, { width: 400, height: 200 });
 
-    expect(model.line.path.startsWith('M')).toBe(true);
-    expect(model.line.strokeWidth).toBeGreaterThan(0);
+    expect(model.line?.path.startsWith('M')).toBe(true);
+    expect(model.line?.strokeWidth).toBeGreaterThan(0);
     expect(model.xAxis.ticks.length).toBeGreaterThan(0);
     expect(model.yAxis.ticks.length).toBeGreaterThan(0);
     expect(model.plot.width).toBe(400 - 48 - 16);
@@ -53,7 +53,7 @@ describe('buildRenderModel', () => {
     };
 
     const model = buildRenderModel(linearOptions, { width: 300, height: 150 });
-    expect(model.line.path.startsWith('M')).toBe(true);
+    expect(model.line?.path.startsWith('M')).toBe(true);
   });
 
   test('y pixel positions decrease as the metric value increases (SVG y grows downward)', () => {
@@ -72,6 +72,6 @@ describe('buildRenderModel', () => {
       axes: [{ position: 'bottom' }, { position: 'left' }],
     };
     const model = buildRenderModel(emptyOptions, { width: 200, height: 100 });
-    expect(model.line.path).toBe('');
+    expect(model.line?.path).toBe('');
   });
 });

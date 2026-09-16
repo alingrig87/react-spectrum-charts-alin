@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import { ReactElement, useMemo } from 'react';
-import { G, Line as SvgLine, Path, Svg, Text as SvgText } from 'react-native-svg';
+import { G, Line as SvgLine, Path, Rect, Svg, Text as SvgText } from 'react-native-svg';
 
 import { ChartOptions } from '@spectrum-charts/vega-spec-builder';
 
@@ -25,7 +25,10 @@ export interface RscNativeChartProps {
   margin?: RenderDimensions['margin'];
 }
 
-/** Renders a single line mark + two axes natively via react-native-svg. See README for spec coverage. */
+/**
+ * Renders a single line or bar mark + two axes natively via react-native-svg. See README for spec
+ * coverage.
+ */
 export const RscNativeChart = ({ chartOptions, width, height, margin }: RscNativeChartProps): ReactElement => {
   const model = useMemo(
     () => buildRenderModel(chartOptions, { width, height, margin }),
@@ -37,13 +40,18 @@ export const RscNativeChart = ({ chartOptions, width, height, margin }: RscNativ
       <G x={model.plot.x} y={model.plot.y}>
         <AxisGroup axis={model.xAxis} plotWidth={model.plot.width} plotHeight={model.plot.height} />
         <AxisGroup axis={model.yAxis} plotWidth={model.plot.width} plotHeight={model.plot.height} />
-        <Path
-          d={model.line.path}
-          stroke={model.line.stroke}
-          strokeWidth={model.line.strokeWidth}
-          strokeDasharray={model.line.strokeDasharray}
-          fill="none"
-        />
+        {model.line && (
+          <Path
+            d={model.line.path}
+            stroke={model.line.stroke}
+            strokeWidth={model.line.strokeWidth}
+            strokeDasharray={model.line.strokeDasharray}
+            fill="none"
+          />
+        )}
+        {model.bars?.map((bar) => (
+          <Rect key={bar.x} x={bar.x} y={bar.y} width={bar.width} height={bar.height} fill={bar.fill} />
+        ))}
       </G>
     </Svg>
   );

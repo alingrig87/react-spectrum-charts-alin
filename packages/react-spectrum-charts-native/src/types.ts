@@ -34,12 +34,26 @@ export interface RenderLine {
   strokeDasharray: number[];
 }
 
-/** The fully-interpreted, renderer-agnostic geometry for one chart. Consumed by RscNativeChart. */
+/** Geometry for one rendered bar (one rect, in plot-pixel space). */
+export interface RenderBar {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fill: string;
+}
+
+/**
+ * The fully-interpreted, renderer-agnostic geometry for one chart. Consumed by RscNativeChart.
+ * Exactly one of `line`/`bars` is populated, depending on which single supported mark the spec
+ * contained — see README for what's supported.
+ */
 export interface RenderModel {
   width: number;
   height: number;
   plot: { x: number; y: number; width: number; height: number };
-  line: RenderLine;
+  line?: RenderLine;
+  bars?: RenderBar[];
   xAxis: RenderAxis;
   yAxis: RenderAxis;
 }

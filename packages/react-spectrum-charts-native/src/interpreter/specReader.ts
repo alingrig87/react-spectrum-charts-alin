@@ -9,14 +9,30 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { GroupMark, LineMark, Scale, Spec } from 'vega';
+import { GroupMark, LineMark, RectMark, Scale, Spec } from 'vega';
+
+import { FILTERED_TABLE } from '@spectrum-charts/constants';
 
 export interface FieldRef {
   scale: string;
   field: string;
 }
 
-type RuleLike = (FieldRef | { value: unknown } | { signal: string }) & { test?: string };
+/** A `{ scale, band }` encoding rule — how Vega sizes a mark to a band scale's bandwidth. */
+export interface BandRef {
+  scale: string;
+  band: number | boolean;
+}
+
+/** Shape of the one transform type we special-case: the `stack` step `addBar` adds for a bar's metric. */
+export interface StackTransformLike {
+  type: 'stack';
+  field: string;
+  groupby: string[];
+  as: [string, string];
+}
+
+type RuleLike = (FieldRef | BandRef | { value: unknown } | { signal: string }) & { test?: string };
 
 /** A Vega ProductionRule is either a single rule or an array with the untested default rule last. */
 const resolveDefaultRule = (rule: unknown): RuleLike | undefined => {
@@ -38,10 +54,26 @@ export const findLineMark = (spec: Spec): LineMark | undefined => {
   return undefined;
 };
 
+/** Finds the first top-level bar (`rect`) mark that isn't the "behind the bars" background rect —
+ * the shape `addBar` produces for a single, ungrouped bar series (`type: 'stacked'`, the default,
+ * with no color/dodge/trellis faceting). Dodged and trellised bars nest their rect marks inside a
+ * facet `group` mark instead, which this deliberately does not look inside — see README. */
+export const findBarMark = (spec: Spec): RectMark | undefined => {
+  const rectMarks = (spec.marks ?? []).filter((m): m is RectMark => m.type === 'rect');
+  return rectMarks.find((m) => typeof m.name === 'string' && !m.name.endsWith('_background'));
+};
+
 /** Reads a `{ scale, field }` encoding rule, if that's the shape it resolves to. */
 export const getFieldRef = (rule: unknown): FieldRef | undefined => {
   const resolved = resolveDefaultRule(rule);
   if (resolved && 'scale' in resolved && 'field' in resolved) return resolved as FieldRef;
+  return undefined;
+};
+
+/** Reads a `{ scale, band }` encoding rule (how bar marks size themselves to a band scale's bandwidth). */
+export const getBandRef = (rule: unknown): BandRef | undefined => {
+  const resolved = resolveDefaultRule(rule);
+  if (resolved && 'scale' in resolved && 'band' in resolved) return resolved as BandRef;
   return undefined;
 };
 
@@ -61,3 +93,15 @@ export const getDefinedField = (rule: unknown): string | undefined => {
 };
 
 export const findScale = (spec: Spec, name: string): Scale | undefined => spec.scales?.find((s) => s.name === name);
+
+/**
+ * Finds the `stack` transform `addBar` pushes onto the `filteredTable` data source for a stacked bar
+ * (the default `type`). Its `field` is the *raw* metric field name (before the `metric0`/`metric1`
+ * split), and `groupby` is the exact set of fields Vega's stack transform groups by at runtime — used
+ * to confirm the interpreter is only being asked to draw one bar per group (see README).
+ */
+export const findStackTransform = (spec: Spec): StackTransformLike | undefined => {
+  const filteredTable = spec.data?.find((d) => d.name === FILTERED_TABLE);
+  const transforms = (filteredTable?.transform ?? []) as unknown as { type: string }[];
+  return transforms.find((t) => t.type === 'stack') as StackTransformLike | undefined;
+};
