@@ -11,8 +11,10 @@
  */
 
 // PLACEHOLDER — this file is overwritten by `yarn storybook-generate` (sb-rn-get-stories),
-// which statically imports every story matched by the glob in `main.ts`. It's checked in
-// so the package type-checks and installs cleanly before that script has ever been run.
+// which statically imports every story matched by the glob in `main.ts`, calls `start(...)`
+// from `@storybook/react-native` itself, and exports the resulting `view` (the shape
+// `.storybook/index.tsx` calls `view.getStorybookUI(...)` on). It's checked in so the
+// package type-checks and installs cleanly before that script has ever been run.
 // Run `yarn storybook-generate` (or `yarn start`/`ios`/`android`, which run it for you) to
 // populate it with the real story registrations.
-export const configure = (): void => undefined;
+export const view = { getStorybookUI: (_options: unknown): null => null };
