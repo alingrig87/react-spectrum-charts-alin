@@ -38,7 +38,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # Not the repo's .nvmrc (20) — yarn's resolution pulls in
+          # react-native@0.87.1 transitively, which requires Node
+          # ^22.13/^24.3/>=26, and this workspace has engine-strict on.
+          node-version: '22'
 
       - name: Install yarn classic
         run: npm install -g yarn
