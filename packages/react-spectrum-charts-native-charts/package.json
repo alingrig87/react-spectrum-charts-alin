@@ -1,0 +1,29 @@
+{
+  "name": "@spectrum-charts/react-spectrum-charts-native-charts",
+  "version": "0.1.0",
+  "description": "Hand-drawn React Native chart components matching @adobe/react-spectrum-charts's visual language, ported from rsc-native-charts and drawn with react-native-svg instead of a WebView or Vega runtime.",
+  "main": "dist/index.js",
+  "types": "dist/@types/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "author": "marshallpete",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum-charts.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "react": ">= 17.0.2",
+    "react-native": ">= 0.70.0",
+    "react-native-svg": ">= 13.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

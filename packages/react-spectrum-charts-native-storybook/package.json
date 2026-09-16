@@ -2,7 +2,7 @@
   "name": "@spectrum-charts/react-spectrum-charts-native-storybook",
   "version": "0.1.0",
   "private": true,
-  "description": "On-device Storybook (Expo) for @spectrum-charts/react-spectrum-charts-native — view RscNativeChart stories on a simulator/device.",
+  "description": "On-device Storybook (Expo) for @spectrum-charts/react-spectrum-charts-native and @spectrum-charts/react-spectrum-charts-native-charts — view RscNativeChart and the hand-drawn native chart set's stories on a simulator/device.",
   "main": "index.ts",
   "author": "marshallpete",
   "license": "Apache-2.0",
@@ -21,6 +21,7 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.23.1",
     "@spectrum-charts/react-spectrum-charts-native": "0.1.0",
+    "@spectrum-charts/react-spectrum-charts-native-charts": "0.1.0",
     "expo": "~51.0.0",
     "expo-status-bar": "~1.12.1",
     "react": "18.2.0",
