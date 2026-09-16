@@ -52,10 +52,16 @@ config.resolver.nodeModulesPaths = [
 // otherwise resolvable, so it was silently never applied. A custom
 // resolveRequest is the one hook that unconditionally overrides
 // resolution regardless of Metro's own default walk.
+// NOT react-native itself: on the web platform Metro/Expo's own default
+// config aliases the bare specifier "react-native" to react-native-web,
+// and forcing it to the real native package here broke that (web export
+// failed outright: "Unable to resolve module react-native from
+// @storybook/react-native-theming/dist/index.js"). The duplicate-copy
+// problem this whole block exists for is specifically about `react`
+// (confirmed by the React error's own text), so only pin that + react-dom.
 const forcedModuleRoots = {
   react: path.resolve(projectRoot, 'node_modules/react'),
   'react-dom': path.resolve(projectRoot, 'node_modules/react-dom'),
-  'react-native': path.resolve(projectRoot, 'node_modules/react-native'),
 };
 const defaultResolveRequest = config.resolver.resolveRequest;
 config.resolver.resolveRequest = (context, moduleName, platform) => {
