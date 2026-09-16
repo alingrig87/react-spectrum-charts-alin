@@ -37,4 +37,19 @@ config.resolver.nodeModulesPaths = [
 // only mattering for a workspace-hoisting edge case the two explicit
 // nodeModulesPaths entries above already handle.
 
+// This app pins react@18.2.0/react-dom@18.2.0 (what Expo 51/RN 0.74
+// need), but the monorepo root's own devDependencies pin react@^19 (for
+// the unrelated desktop packages) — with hierarchical lookup on, Metro
+// can resolve two different `react` installs for different requirers in
+// the same bundle, which React itself refuses to render ("Minified React
+// error #525: A React Element from an older version of React was
+// rendered... Multiple copies of the react package is used" — confirmed
+// via a live screenshot + console error). Force every requirer to this
+// app's own copies specifically for these three packages.
+config.resolver.extraNodeModules = {
+  react: path.resolve(projectRoot, 'node_modules/react'),
+  'react-dom': path.resolve(projectRoot, 'node_modules/react-dom'),
+  'react-native': path.resolve(projectRoot, 'node_modules/react-native'),
+};
+
 module.exports = config;
