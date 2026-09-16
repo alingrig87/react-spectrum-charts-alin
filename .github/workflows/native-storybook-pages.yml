@@ -27,7 +27,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
-      NODE_OPTIONS: --max-old-space-size=14336
+      NODE_OPTIONS: --max-old-space-size=8192
       CI: '1'
       EXPO_NO_TELEMETRY: '1'
 
@@ -38,34 +38,39 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          # Not the repo's .nvmrc (20) — yarn's resolution pulls in
+          # Not the repo's .nvmrc (20) — the resolved tree pulls in
           # react-native@0.87.1 transitively, which requires Node
           # ^22.13/^24.3/>=26, and this workspace has engine-strict on.
           node-version: '22'
-
-      - name: Install yarn classic
-        run: npm install -g yarn
 
       - name: Report runner memory
         run: free -h
 
       - name: Install dependencies
-        run: yarn install --network-timeout 600000
+        # yarn classic v1's resolver reliably OOMs on this monorepo's
+        # dependency graph even at a 14GB heap ceiling on a 15GB runner
+        # (confirmed) — npm's resolver handles the same workspaces
+        # layout (package.json's "workspaces" field is npm 7+
+        # compatible) without that blowup. --legacy-peer-deps because
+        # the root's React 19 devDependency conflicts with
+        # @adobe/react-spectrum's React 16/17/18 peer range; harmless
+        # here since this is a disposable CI checkout.
+        run: npm install --legacy-peer-deps
 
       - name: Build @spectrum-charts/constants
-        run: yarn workspace @spectrum-charts/constants build
+        run: npm run build --workspace=@spectrum-charts/constants
 
       - name: Build @spectrum-charts/vega-spec-builder
-        run: yarn workspace @spectrum-charts/vega-spec-builder build
+        run: npm run build --workspace=@spectrum-charts/vega-spec-builder
 
       - name: Build @spectrum-charts/react-spectrum-charts-native
-        run: yarn workspace @spectrum-charts/react-spectrum-charts-native build
+        run: npm run build --workspace=@spectrum-charts/react-spectrum-charts-native
 
       - name: Build @spectrum-charts/react-spectrum-charts-native-charts
-        run: yarn workspace @spectrum-charts/react-spectrum-charts-native-charts build
+        run: npm run build --workspace=@spectrum-charts/react-spectrum-charts-native-charts
 
       - name: Generate on-device Storybook story registry
-        run: yarn workspace @spectrum-charts/react-spectrum-charts-native-storybook storybook-generate
+        run: npm run storybook-generate --workspace=@spectrum-charts/react-spectrum-charts-native-storybook
 
       - name: Export static web build
         run: npx expo export --platform web -o dist
