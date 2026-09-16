@@ -27,6 +27,14 @@ config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
   path.resolve(workspaceRoot, 'node_modules'),
 ];
-config.resolver.disableHierarchicalLookup = true;
+// Deliberately left at its default (false): npm nests some of this
+// package's own transitive deps (e.g. @storybook/react-native's pinned
+// storybook-core packages, via this repo's package.json "overrides")
+// inside node_modules/@storybook/react-native/node_modules/ instead of
+// hoisting them — a path neither entry above covers. Hierarchical
+// lookup is what lets Metro find those nested copies; disabling it
+// (as a prior version of this file did) breaks that resolution while
+// only mattering for a workspace-hoisting edge case the two explicit
+// nodeModulesPaths entries above already handle.
 
 module.exports = config;
