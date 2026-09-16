@@ -27,7 +27,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
-      NODE_OPTIONS: --max-old-space-size=6144
+      NODE_OPTIONS: --max-old-space-size=14336
       CI: '1'
       EXPO_NO_TELEMETRY: '1'
 
@@ -45,6 +45,9 @@ jobs:
 
       - name: Install yarn classic
         run: npm install -g yarn
+
+      - name: Report runner memory
+        run: free -h
 
       - name: Install dependencies
         run: yarn install --network-timeout 600000
