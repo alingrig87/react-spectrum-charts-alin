@@ -15,7 +15,7 @@
       "output": "single"
     },
     "experiments": {
-      "baseUrl": "/react-spectrum-charts-alin"
+      "baseUrl": "/react-spectrum-charts-alin/native"
     }
   }
 }
