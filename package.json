@@ -181,6 +181,14 @@
     "@types/react-dom": "^19.0.0",
     "jackspeak": "2.1.1"
   },
+  "overrides": {
+    "@storybook/react-native": {
+      "@storybook/preview-api": "7.6.20",
+      "@storybook/manager-api": "7.6.20",
+      "@storybook/channels": "7.6.20",
+      "@storybook/core-events": "7.6.20"
+    }
+  },
   "bugs": {
     "url": "https://github.com/adobe/react-spectrum-charts/issues"
   },
