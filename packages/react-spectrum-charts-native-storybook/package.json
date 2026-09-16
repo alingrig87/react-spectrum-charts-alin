@@ -34,8 +34,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.5",
-    "@storybook/addon-ondevice-actions": "^7.6.20",
-    "@storybook/addon-ondevice-controls": "^7.6.20",
     "@storybook/react-native": "^7.6.20",
     "@types/react": "~18.2.79",
     "babel-preset-expo": "~11.0.0",

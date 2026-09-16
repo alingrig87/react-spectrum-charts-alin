@@ -191,12 +191,8 @@
     "@storybook/preview-api": "7.6.20",
     "@storybook/preview-web": "7.6.20",
     "@storybook/client-logger": "7.6.20",
-    "@storybook/addon-controls": "7.6.20",
     "@storybook/react-native": {
       "@storybook/react": "7.6.20"
-    },
-    "@storybook/addon-ondevice-actions": {
-      "@storybook/addon-actions": "7.6.20"
     }
   },
   "bugs": {
