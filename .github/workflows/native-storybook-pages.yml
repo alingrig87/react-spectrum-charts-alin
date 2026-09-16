@@ -57,8 +57,17 @@ jobs:
         # here since this is a disposable CI checkout.
         run: npm install --legacy-peer-deps
 
+      - name: Build @spectrum-charts/themes
+        run: npm run build --workspace=@spectrum-charts/themes
+
       - name: Build @spectrum-charts/constants
         run: npm run build --workspace=@spectrum-charts/constants
+
+      - name: Build @spectrum-charts/utils
+        run: npm run build --workspace=@spectrum-charts/utils
+
+      - name: Build @spectrum-charts/locales
+        run: npm run build --workspace=@spectrum-charts/locales
 
       - name: Build @spectrum-charts/vega-spec-builder
         run: npm run build --workspace=@spectrum-charts/vega-spec-builder
