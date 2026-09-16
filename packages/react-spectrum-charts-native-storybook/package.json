@@ -19,6 +19,7 @@
     "clean": "rm -rf .expo dist"
   },
   "dependencies": {
+    "@expo/metro-runtime": "~3.2.3",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@spectrum-charts/react-spectrum-charts-native": "0.1.0",
     "@spectrum-charts/react-spectrum-charts-native-charts": "0.1.0",
