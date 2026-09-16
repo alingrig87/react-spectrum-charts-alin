@@ -82,7 +82,7 @@ jobs:
         run: npm run storybook-generate --workspace=@spectrum-charts/react-spectrum-charts-native-storybook
 
       - name: Export static web build
-        run: npx expo export --platform web -o dist
+        run: npx expo export --platform web --output-dir dist
         working-directory: packages/react-spectrum-charts-native-storybook
 
       - name: Deploy to GitHub Pages (/native/)
